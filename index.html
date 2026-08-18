@@ -352,6 +352,7 @@
       <nav class="nav-links">
         <a href="#drops">กิจกรรมล่าสุด</a>
         <a href="#prizes">รางวัล</a>
+        <a href="#winners">ผู้ชนะ</a>
         <a href="#entry">วิธีเข้าร่วม</a>
         <a href="#faq">คำถามที่พบบ่อย</a>
       </nav>
@@ -458,6 +459,17 @@
     </div>
   </section>
 
+  <section id="winners">
+    <div class="wrap">
+      <div class="section-head">
+        <div><span class="kicker">ผู้โชคดี</span><h2>ผู้ชนะรอบที่ผ่านมา</h2></div>
+      </div>
+      <div id="winners-list">
+        <div class="box3d" style="padding:28px;text-align:center;color:var(--text-muted);border-radius:16px;">กำลังโหลดรายชื่อผู้โชคดี...</div>
+      </div>
+    </div>
+  </section>
+
   <section id="faq">
     <div class="wrap">
       <div class="section-head"><div><span class="kicker">คำถามที่พบบ่อย</span><h2>Frequently Asked Questions</h2></div></div>
@@ -560,8 +572,8 @@
   <script>
     // 🔑 แทนที่ 2 บรรทัดนี้ด้วย Project URL และ Publishable key ของคุณเอง
     // หาได้ที่ Supabase → Settings → API Keys
-    const SUPABASE_URL = 'https://vgvstfggkmxgxwicnnxc.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_Jj4XOepiICjzOND7HjNs8A_E8N5qzrB';
+    const SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
+    const SUPABASE_KEY = 'YOUR_PUBLISHABLE_KEY';
 
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -616,6 +628,44 @@
     }
 
     loadEvents();
+
+    async function loadWinners(){
+      const el = document.getElementById('winners-list');
+      if(!el) return;
+
+      const { data: winners, error } = await sb
+        .from('winners')
+        .select('announced_at, events(title, prize), participants(display_name)')
+        .order('announced_at', { ascending: false })
+        .limit(9);
+
+      if(error){
+        console.error('โหลดผู้ชนะไม่สำเร็จ:', error.message);
+        el.innerHTML = '<div class="box3d" style="padding:28px;text-align:center;color:var(--text-muted);border-radius:16px;">โหลดรายชื่อผู้ชนะไม่สำเร็จ ลองรีเฟรชหน้าอีกครั้ง</div>';
+        return;
+      }
+
+      if(!winners || winners.length === 0){
+        el.innerHTML = '<div class="box3d" style="padding:28px;text-align:center;color:var(--text-muted);border-radius:16px;">🎲 ยังไม่มีการประกาศผลในตอนนี้ รายชื่อผู้โชคดีจะแสดงที่นี่ทันทีหลังจับรางวัลเสร็จ</div>';
+        return;
+      }
+
+      const dtFmt = new Intl.DateTimeFormat('th-TH', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+
+      el.innerHTML = '<div class="steps">' + winners.map(function(w){
+        const name = w.participants ? w.participants.display_name : 'ไม่ทราบชื่อ';
+        const eventTitle = w.events ? w.events.title : '';
+        const prize = w.events ? w.events.prize : '';
+        const when = dtFmt.format(new Date(w.announced_at));
+        return '<div class="step box3d">' +
+          '<div class="n gloss"><span>🏆</span></div>' +
+          '<h3>' + name + '</h3>' +
+          '<p>ชนะกิจกรรม "' + eventTitle + '"' + (prize ? ' — ได้รับ ' + prize : '') + '<br><span style="opacity:0.7;">' + when + '</span></p>' +
+        '</div>';
+      }).join('') + '</div>';
+    }
+
+    loadWinners();
 
     /* ===================== ระบบสมาชิก (Auth) ===================== */
     let currentUser = null;

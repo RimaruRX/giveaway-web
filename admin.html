@@ -121,11 +121,15 @@
       <form id="login-form" onsubmit="return handleLogin(event)">
         <label class="field-label">อีเมล</label>
         <input class="field-input" type="email" id="login-email" required />
-            <label class="field-label">รหัสผ่าน</label>
+        <label class="field-label">รหัสผ่าน</label>
         <div style="position:relative;">
           <input class="field-input" type="password" id="login-password" required style="padding-right:44px;" />
           <button type="button" onclick="togglePw('login-password', this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.05rem;color:var(--text-muted);">👁️</button>
         </div>
+        <button class="submit-btn gloss" type="submit" style="width:100%;">เข้าสู่ระบบ</button>
+        <div class="msg" id="login-msg"></div>
+      </form>
+    </div>
 
     <div id="denied-view" class="card box3d" style="display:none;">
       <h2>🚫 ไม่มีสิทธิ์เข้าถึง</h2>

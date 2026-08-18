@@ -559,8 +559,11 @@
       <form id="auth-form" onsubmit="return handleAuthSubmit(event)">
         <label class="field-label">อีเมล</label>
         <input class="field-input" type="email" id="auth-email" required placeholder="you@example.com" />
-        <label class="field-label">รหัสผ่าน</label>
-        <input class="field-input" type="password" id="auth-password" required minlength="6" placeholder="อย่างน้อย 6 ตัวอักษร" />
+                <label class="field-label">รหัสผ่าน</label>
+        <div style="position:relative;">
+          <input class="field-input" type="password" id="auth-password" required minlength="6" placeholder="อย่างน้อย 6 ตัวอักษร" style="padding-right:44px;" />
+          <button type="button" onclick="togglePw('auth-password', this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.05rem;color:var(--text-muted);">👁️</button>
+        </div>
                 <button class="modal-submit gloss" type="submit" id="auth-submit-btn"><span style="position:relative;">เข้าสู่ระบบ</span></button>
         <div class="modal-msg" id="auth-msg"></div>
         <div style="text-align:center;margin-top:10px;">
@@ -579,6 +582,12 @@
     const SUPABASE_KEY = 'sb_publishable_Jj4XOepiICjzOND7HjNs8A_E8N5qzrB';
 
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function togglePw(id, btn){
+      const el = document.getElementById(id);
+      el.type = el.type === 'password' ? 'text' : 'password';
+      btn.textContent = el.type === 'password' ? '👁️' : '🙈';
+    }
 
     async function loadEvents(){
       const grid = document.getElementById('prize-grid');

@@ -561,8 +561,11 @@
         <input class="field-input" type="email" id="auth-email" required placeholder="you@example.com" />
         <label class="field-label">รหัสผ่าน</label>
         <input class="field-input" type="password" id="auth-password" required minlength="6" placeholder="อย่างน้อย 6 ตัวอักษร" />
-        <button class="modal-submit gloss" type="submit" id="auth-submit-btn"><span style="position:relative;">เข้าสู่ระบบ</span></button>
+                <button class="modal-submit gloss" type="submit" id="auth-submit-btn"><span style="position:relative;">เข้าสู่ระบบ</span></button>
         <div class="modal-msg" id="auth-msg"></div>
+        <div style="text-align:center;margin-top:10px;">
+          <a href="#" onclick="handleForgotPassword(event)" style="color:var(--gold-2);font-size:0.85rem;">ลืมรหัสผ่าน?</a>
+        </div>
       </form>
     </div>
   </div>
@@ -727,6 +730,29 @@
       return false;
     }
 
+        async function handleForgotPassword(e){
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const msg = document.getElementById('auth-msg');
+      if(!email){
+        msg.className = 'modal-msg error';
+        msg.textContent = 'กรอกอีเมลในช่องด้านบนก่อน แล้วกดลืมรหัสผ่านอีกครั้ง';
+        return;
+      }
+      msg.className = 'modal-msg';
+      msg.textContent = 'กำลังส่งลิงก์...';
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password.html'
+      });
+      if(error){
+        msg.className = 'modal-msg error';
+        msg.textContent = error.message;
+      } else {
+        msg.className = 'modal-msg ok';
+        msg.textContent = 'ส่งลิงก์เปลี่ยนรหัสผ่านไปที่อีเมลแล้ว เช็คกล่องจดหมายครับ';
+      }
+    }
+    
     async function handleSignOut(){
       await sb.auth.signOut();
     }

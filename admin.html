@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>แจกจริง — Admin Dashboard</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0708; --bg-2:#160f10; --bg-3:#1e1415;
+    --red:#e2141c; --red-2:#a80d13; --red-glow:rgba(226,20,28,0.35); --black-deep:#1a0404;
+    --gold-1:#fff6d8; --gold-2:#f3cc5c; --gold-3:#c8960f; --gold-4:#7a5a0c; --gold-text:#3a2405;
+    --text:#f7ece0; --text-muted:#b79a94; --line:rgba(247,236,224,0.12); --live:#2ee673;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Kanit', sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Kanit',sans-serif; font-weight:800; margin:0; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  :focus-visible{ outline:2px solid var(--gold-2); outline-offset:3px; }
+  .wrap{ max-width:920px; margin:0 auto; padding:0 22px; }
+
+  .gloss{
+    position:relative;
+    background:linear-gradient(160deg, var(--gold-1) 0%, var(--gold-2) 38%, var(--gold-3) 72%, var(--gold-4) 100%);
+    color:var(--gold-text);
+    border:1px solid rgba(255,244,200,0.7);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -10px 16px rgba(0,0,0,0.28), 0 14px 30px -12px rgba(0,0,0,0.65);
+  }
+  .box3d{
+    background:linear-gradient(165deg, var(--bg-3) 0%, var(--bg-2) 75%);
+    border:1px solid rgba(247,236,224,0.09); border-top-color:rgba(247,236,224,0.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -16px 26px rgba(0,0,0,0.42), 0 18px 32px -18px rgba(0,0,0,0.8);
+    border-radius:16px;
+  }
+
+  header.nav{
+    position:sticky; top:0; z-index:20; background:rgba(10,7,8,0.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:16px 0;
+  }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; }
+  .brand{ font-size:1.15rem; font-weight:800; color:var(--gold-2); }
+  .brand span{ color:var(--text-muted); font-weight:500; font-size:0.85rem; margin-left:8px; }
+  .btn{
+    border:none; cursor:pointer; font-family:'Kanit',sans-serif; font-weight:700;
+    padding:10px 18px; border-radius:9px; font-size:0.88rem;
+  }
+  .btn-ghost{ background:transparent; border:1.5px solid var(--gold-3); color:var(--gold-2); }
+  .btn-danger{ background:var(--red); color:#fff; }
+
+  main{ padding:36px 0 80px; }
+  .card{ padding:26px; margin-bottom:22px; }
+  .card h2{ font-size:1.15rem; margin-bottom:16px; }
+
+  .field-label{ font-size:0.82rem; color:var(--text-muted); margin-bottom:6px; display:block; }
+  .field-input, .field-textarea{
+    width:100%; padding:11px 13px; border-radius:9px; margin-bottom:14px;
+    background:var(--bg); border:1px solid var(--line); color:var(--text);
+    font-family:'Kanit',sans-serif; font-size:0.92rem;
+  }
+  .field-textarea{ resize:vertical; min-height:70px; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:600px){ .field-row{ grid-template-columns:1fr; } }
+
+  .submit-btn{
+    padding:12px 22px; border-radius:9px; border:none; cursor:pointer;
+    font-weight:800; font-size:0.94rem;
+  }
+  .msg{ font-size:0.85rem; margin-top:10px; min-height:18px; }
+  .msg.error{ color:#ff8f8f; }
+  .msg.ok{ color:#7be89c; }
+
+  .event-row{
+    padding:18px; border-radius:12px; background:var(--bg-3);
+    border:1px solid var(--line); margin-bottom:12px;
+  }
+  .event-row .top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+  .event-row h3{ font-size:1.02rem; }
+  .status-pill{
+    font-size:0.72rem; font-weight:700; padding:4px 10px; border-radius:999px;
+    text-transform:uppercase;
+  }
+  .status-open{ background:rgba(46,230,115,0.15); color:var(--live); }
+  .status-closed{ background:rgba(226,20,28,0.18); color:#ff9b9b; }
+  .event-meta{ color:var(--text-muted); font-size:0.85rem; margin-top:6px; }
+  .event-actions{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; align-items:center; }
+  .qty-input{
+    width:60px; padding:8px; border-radius:8px; background:var(--bg);
+    border:1px solid var(--line); color:var(--text); text-align:center;
+  }
+
+  .winner-row{
+    padding:12px 16px; border-radius:10px; background:var(--bg-3);
+    border:1px solid var(--line); margin-bottom:8px; font-size:0.9rem;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;
+  }
+  .winner-row b{ color:var(--gold-2); }
+
+  #login-view{ max-width:380px; margin:80px auto; }
+  #denied-view{ max-width:420px; margin:100px auto; text-align:center; }
+</style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <div class="brand">🔴 แจกจริง <span>Admin Dashboard</span></div>
+      <div id="nav-actions"></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <div id="login-view" class="card box3d" style="display:none;">
+      <h2>เข้าสู่ระบบแอดมิน</h2>
+      <form id="login-form" onsubmit="return handleLogin(event)">
+        <label class="field-label">อีเมล</label>
+        <input class="field-input" type="email" id="login-email" required />
+        <label class="field-label">รหัสผ่าน</label>
+        <input class="field-input" type="password" id="login-password" required />
+        <button class="submit-btn gloss" type="submit" style="width:100%;">เข้าสู่ระบบ</button>
+        <div class="msg" id="login-msg"></div>
+      </form>
+    </div>
+
+    <div id="denied-view" class="card box3d" style="display:none;">
+      <h2>🚫 ไม่มีสิทธิ์เข้าถึง</h2>
+      <p style="color:var(--text-muted);">บัญชีนี้ไม่ได้รับสิทธิ์แอดมิน ติดต่อผู้ดูแลระบบหากคิดว่านี่คือความผิดพลาด</p>
+      <button class="btn btn-ghost" style="margin-top:10px;" onclick="handleSignOut()">ออกจากระบบ</button>
+    </div>
+
+    <div id="dashboard-view" style="display:none;">
+
+      <div class="card box3d">
+        <h2>➕ สร้างกิจกรรมใหม่</h2>
+        <form id="create-event-form" onsubmit="return handleCreateEvent(event)">
+          <label class="field-label">ชื่อกิจกรรม</label>
+          <input class="field-input" id="ev-title" required placeholder="เช่น GIVEAWAY รอบที่ 2" />
+          <label class="field-label">รายละเอียด</label>
+          <textarea class="field-textarea" id="ev-desc" placeholder="อธิบายกิจกรรมสั้น ๆ"></textarea>
+          <div class="field-row">
+            <div>
+              <label class="field-label">รางวัล</label>
+              <input class="field-input" id="ev-prize" placeholder="เช่น 100 Robux" />
+            </div>
+            <div>
+              <label class="field-label">จำนวนสิทธิ์</label>
+              <input class="field-input" id="ev-limit" type="number" min="1" value="50" />
+            </div>
+          </div>
+          <button class="submit-btn gloss" type="submit">สร้างกิจกรรม</button>
+          <div class="msg" id="create-msg"></div>
+        </form>
+      </div>
+
+      <div class="card box3d">
+        <h2>📋 กิจกรรมทั้งหมด</h2>
+        <div id="events-list"><p style="color:var(--text-muted);">กำลังโหลด...</p></div>
+      </div>
+
+      <div class="card box3d">
+        <h2>🏆 ผู้ชนะล่าสุด</h2>
+        <div id="winners-list"><p style="color:var(--text-muted);">กำลังโหลด...</p></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // 🔑 คัดลอก 2 บรรทัดนี้จากไฟล์ index.html ของคุณ (ค่าเดียวกัน)
+    const SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
+    const SUPABASE_KEY = 'YOUR_PUBLISHABLE_KEY';
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let currentUser = null;
+    let isAdmin = false;
+
+    function show(id){
+      ['login-view','denied-view','dashboard-view'].forEach(function(v){
+        document.getElementById(v).style.display = (v === id) ? 'block' : 'none';
+      });
+    }
+
+    async function handleLogin(e){
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const msg = document.getElementById('login-msg');
+      msg.className = 'msg';
+      msg.textContent = 'กำลังเข้าสู่ระบบ...';
+
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if(error){
+        msg.className = 'msg error';
+        msg.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+        return false;
+      }
+      msg.textContent = '';
+      return false;
+    }
+
+    async function handleSignOut(){
+      await sb.auth.signOut();
+    }
+
+    function renderNav(){
+      const el = document.getElementById('nav-actions');
+      if(currentUser){
+        el.innerHTML =
+          '<span style="color:var(--text-muted);font-size:0.85rem;margin-right:12px;">' + currentUser.email + '</span>' +
+          '<button class="btn btn-danger" onclick="handleSignOut()">ออกจากระบบ</button>';
+      } else {
+        el.innerHTML = '';
+      }
+    }
+
+    async function checkAdminAndRender(){
+      if(!currentUser){
+        show('login-view');
+        renderNav();
+        return;
+      }
+      const { data, error } = await sb.from('admins').select('user_id').eq('user_id', currentUser.id).maybeSingle();
+      isAdmin = !!data && !error;
+      renderNav();
+      if(isAdmin){
+        show('dashboard-view');
+        loadEventsAdmin();
+        loadWinnersAdmin();
+      } else {
+        show('denied-view');
+      }
+    }
+
+    sb.auth.onAuthStateChange((event, session) => {
+      currentUser = session ? session.user : null;
+      checkAdminAndRender();
+    });
+
+    async function handleCreateEvent(e){
+      e.preventDefault();
+      const msg = document.getElementById('create-msg');
+      msg.className = 'msg';
+      msg.textContent = 'กำลังบันทึก...';
+
+      const payload = {
+        title: document.getElementById('ev-title').value.trim(),
+        description: document.getElementById('ev-desc').value.trim(),
+        prize: document.getElementById('ev-prize').value.trim(),
+        slot_limit: parseInt(document.getElementById('ev-limit').value, 10) || 50,
+        status: 'open'
+      };
+
+      const { error } = await sb.from('events').insert(payload);
+      if(error){
+        msg.className = 'msg error';
+        msg.textContent = 'สร้างไม่สำเร็จ: ' + error.message;
+        return false;
+      }
+      msg.className = 'msg ok';
+      msg.textContent = 'สร้างกิจกรรมสำเร็จ!';
+      document.getElementById('create-event-form').reset();
+      document.getElementById('ev-limit').value = 50;
+      loadEventsAdmin();
+      return false;
+    }
+
+    async function loadEventsAdmin(){
+      const el = document.getElementById('events-list');
+      const { data: events, error } = await sb
+        .from('events')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if(error){
+        el.innerHTML = '<p style="color:#ff8f8f;">โหลดกิจกรรมไม่สำเร็จ: ' + error.message + '</p>';
+        return;
+      }
+      if(!events || events.length === 0){
+        el.innerHTML = '<p style="color:var(--text-muted);">ยังไม่มีกิจกรรม</p>';
+        return;
+      }
+
+      let html = '';
+      for(const ev of events){
+        const { count } = await sb.from('participants').select('*', { count: 'exact', head: true }).eq('event_id', ev.id);
+        const taken = count || 0;
+        const statusClass = ev.status === 'open' ? 'status-open' : 'status-closed';
+        html +=
+          '<div class="event-row">' +
+            '<div class="top">' +
+              '<div><h3>' + ev.title + '</h3><div class="event-meta">' + (ev.prize || '-') + ' · เข้าร่วมแล้ว ' + taken + '/' + ev.slot_limit + ' คน</div></div>' +
+              '<span class="status-pill ' + statusClass + '">' + (ev.status === 'open' ? 'เปิดรับ' : 'ปิดแล้ว') + '</span>' +
+            '</div>' +
+            '<div class="event-actions">' +
+              (ev.status === 'open'
+                ? '<button class="btn btn-ghost" onclick="closeEvent(\'' + ev.id + '\')">ปิดรับสมัคร</button>' +
+                  '<input class="qty-input mono" type="number" min="1" value="1" id="qty-' + ev.id + '" />' +
+                  '<button class="btn gloss" onclick="drawWinners(\'' + ev.id + '\')">🎲 สุ่มผู้ชนะ</button>'
+                : '<span style="color:var(--text-muted);font-size:0.85rem;">ปิดรับสมัครแล้ว ไม่สามารถสุ่มซ้ำได้</span>') +
+            '</div>' +
+            '<div class="msg" id="ev-msg-' + ev.id + '"></div>' +
+          '</div>';
+      }
+      el.innerHTML = html;
+    }
+
+    async function closeEvent(eventId){
+      const { error } = await sb.from('events').update({ status: 'closed' }).eq('id', eventId);
+      if(error){ alert('ปิดกิจกรรมไม่สำเร็จ: ' + error.message); return; }
+      loadEventsAdmin();
+    }
+
+    async function drawWinners(eventId){
+      const qtyEl = document.getElementById('qty-' + eventId);
+      const msgEl = document.getElementById('ev-msg-' + eventId);
+      const count = parseInt(qtyEl.value, 10) || 1;
+      msgEl.className = 'msg';
+      msgEl.textContent = 'กำลังสุ่ม...';
+
+      const { data, error } = await sb.rpc('draw_winners', { p_event_id: eventId, p_count: count });
+      if(error){
+        msgEl.className = 'msg error';
+        msgEl.textContent = 'สุ่มไม่สำเร็จ: ' + error.message;
+        return;
+      }
+      msgEl.className = 'msg ok';
+      msgEl.textContent = 'สุ่มสำเร็จ! ผู้ชนะ: ' + (data || []).map(function(d){ return d.out_display_name; }).join(', ');
+      loadEventsAdmin();
+      loadWinnersAdmin();
+    }
+
+    async function loadWinnersAdmin(){
+      const el = document.getElementById('winners-list');
+      const { data: winners, error } = await sb
+        .from('winners')
+        .select('announced_at, events(title, prize), participants(display_name)')
+        .order('announced_at', { ascending: false })
+        .limit(20);
+
+      if(error){
+        el.innerHTML = '<p style="color:#ff8f8f;">โหลดผู้ชนะไม่สำเร็จ: ' + error.message + '</p>';
+        return;
+      }
+      if(!winners || winners.length === 0){
+        el.innerHTML = '<p style="color:var(--text-muted);">ยังไม่มีผู้ชนะ</p>';
+        return;
+      }
+
+      const dtFmt = new Intl.DateTimeFormat('th-TH', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      el.innerHTML = winners.map(function(w){
+        const name = w.participants ? w.participants.display_name : '-';
+        const title = w.events ? w.events.title : '-';
+        return '<div class="winner-row"><span><b>' + name + '</b> — ' + title + '</span><span>' + dtFmt.format(new Date(w.announced_at)) + '</span></div>';
+      }).join('');
+    }
+  </script>
+</body>
+</html>

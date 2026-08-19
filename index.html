@@ -344,7 +344,7 @@
 </head>
 <body>
 
-  <div class="ribbon"><span class="live-dot"></span>วันนี้แจกโค้ด: <strong>FREE2026</strong> — ใช้รับสิทธิ์เข้าร่วมกิจกรรมพิเศษ</div>
+  <div class="ribbon"><span class="live-dot"></span><span id="ribbon-text">วันนี้แจกโค้ด: <strong>FREE2026</strong> — ใช้รับสิทธิ์เข้าร่วมกิจกรรมพิเศษ</span></div>
 
   <header class="nav">
     <div class="wrap nav-inner">
@@ -365,9 +365,9 @@
 
   <section class="hero">
     <div class="wrap hero-inner">
-      <span class="badge-pill">🎮 กิจกรรมแจกไอเทม/รางวัลเกมฟรีทุกวัน</span>
-      <h1>ลุ้นรางวัลเกม<span class="deco-title" style="font-size:0.85em; display:inline-block;">ฟรีทุกวัน</span><br>จับจริง ประกาศจริง ตรวจสอบได้</h1>
-      <p class="sub">เข้าร่วมง่าย ไม่มีค่าใช้จ่าย ทุกกิจกรรมมีคลิปประกาศผลสด เพื่อให้มั่นใจว่าของถึงมือผู้โชคดีจริงทุกรอบ</p>
+      <span class="badge-pill" id="hero-badge">🎮 กิจกรรมแจกไอเทม/รางวัลเกมฟรีทุกวัน</span>
+      <h1 id="hero-title">ลุ้นรางวัลเกม<span class="deco-title" style="font-size:0.85em; display:inline-block;" id="hero-title-highlight">ฟรีทุกวัน</span><br><span id="hero-title-sub">จับจริง ประกาศจริง ตรวจสอบได้</span></h1>
+      <p class="sub" id="hero-subtitle">เข้าร่วมง่าย ไม่มีค่าใช้จ่าย ทุกกิจกรรมมีคลิปประกาศผลสด เพื่อให้มั่นใจว่าของถึงมือผู้โชคดีจริงทุกรอบ</p>
       <div class="hero-actions">
         <button class="btn-cta gloss" type="button" onclick="handleHeroJoinClick()"><span style="position:relative;">เข้าร่วมตอนนี้ ฟรี</span></button>
         <a class="btn-cta-outline" href="#drops">ดูกิจกรรมสด</a>
@@ -415,7 +415,7 @@
   </section>
 
   <div class="wrap">
-    <div class="ad-slot">
+    <div class="ad-slot" id="ad-slot-1">
       <span class="tag">พื้นที่โฆษณา</span>
       จะใส่ Ad Code ของ Adsterra ตรงนี้ภายหลัง (ตำแหน่ง: หลังกิจกรรมล่าสุด)
     </div>
@@ -426,11 +426,8 @@
       <div class="section-head">
         <div><span class="kicker">หมวดหมู่</span><h2>เลือกดูรางวัลตามเกมที่เล่น</h2></div>
       </div>
-      <div class="cat-grid">
-        <a class="cat-card box3d" href="#prizes"><div class="emoji">🗡️</div><div class="t">Blox Fruits</div><div class="n">รางวัลในเกม</div></a>
-        <a class="cat-card box3d" href="#prizes"><div class="emoji">🌱</div><div class="t">Grow a Garden</div><div class="n">ไอเทม/สัตว์เลี้ยง</div></a>
-        <a class="cat-card box3d" href="#prizes"><div class="emoji">🔫</div><div class="t">Free Fire</div><div class="n">เพชร/สกิน</div></a>
-        <a class="cat-card box3d" href="#prizes"><div class="emoji">🎟️</div><div class="t">บัตรเติมเกม</div><div class="n">Robux / ROV</div></a>
+      <div class="cat-grid" id="cat-grid">
+        <div style="grid-column:1/-1;text-align:center;color:var(--text-muted);">กำลังโหลด...</div>
       </div>
     </div>
   </section>
@@ -473,23 +470,14 @@
   <section id="faq">
     <div class="wrap">
       <div class="section-head"><div><span class="kicker">คำถามที่พบบ่อย</span><h2>Frequently Asked Questions</h2></div></div>
-      <details class="faq-item box3d">
-        <summary>เข้าร่วมกิจกรรมต้องเสียเงินไหม?</summary>
-        <p>ไม่ต้องครับ ทุกกิจกรรมบนเว็บนี้เข้าร่วมได้ฟรี 100% ไม่มีค่าใช้จ่ายแอบแฝง</p>
-      </details>
-      <details class="faq-item box3d">
-        <summary>จับรางวัลยังไงถึงจะโปร่งใส?</summary>
-        <p>ทุกรอบมีการบันทึกขั้นตอนการสุ่มและประกาศผลพร้อมหลักฐานให้ตรวจสอบย้อนหลังได้</p>
-      </details>
-      <details class="faq-item box3d">
-        <summary>เข้าร่วมได้กี่ครั้งต่อกิจกรรม?</summary>
-        <p>1 บัญชี เข้าร่วมได้ 1 สิทธิ์ต่อกิจกรรม เพื่อความยุติธรรมกับผู้เข้าร่วมทุกคน</p>
-      </details>
+      <div id="faq-list">
+        <div style="text-align:center;color:var(--text-muted);">กำลังโหลด...</div>
+      </div>
     </div>
   </section>
 
   <div class="wrap">
-    <div class="ad-slot">
+    <div class="ad-slot" id="ad-slot-2">
       <span class="tag">พื้นที่โฆษณา</span>
       จะใส่ Ad Code ของ Adsterra ตรงนี้ภายหลัง (ตำแหน่ง: ก่อน Footer)
     </div>
@@ -678,6 +666,43 @@
     }
 
     loadWinners();
+
+    /* ===================== เนื้อหาเว็บไซต์แบบไดนามิก ===================== */
+    async function loadSiteSettings(){
+      const { data, error } = await sb.from('site_settings').select('*').eq('id', 1).maybeSingle();
+      if(error || !data) return;
+
+      document.getElementById('ribbon-text').innerHTML = data.ribbon_text || '';
+      document.getElementById('hero-badge').textContent = data.hero_badge || '';
+      document.getElementById('hero-title-highlight').textContent = data.hero_title_highlight || '';
+      document.getElementById('hero-title-sub').textContent = data.hero_title_sub || '';
+      document.getElementById('hero-subtitle').textContent = data.hero_subtitle || '';
+      document.getElementById('hero-title').childNodes[0].textContent = data.hero_title_main || '';
+
+      if(data.ad_slot_1){ document.getElementById('ad-slot-1').innerHTML = data.ad_slot_1; }
+      if(data.ad_slot_2){ document.getElementById('ad-slot-2').innerHTML = data.ad_slot_2; }
+    }
+    loadSiteSettings();
+
+    async function loadCategories(){
+      const el = document.getElementById('cat-grid');
+      const { data, error } = await sb.from('categories').select('*').order('sort_order');
+      if(error || !data || data.length === 0){ el.innerHTML = ''; return; }
+      el.innerHTML = data.map(function(c){
+        return '<a class="cat-card box3d" href="#prizes"><div class="emoji">' + (c.emoji||'') + '</div><div class="t">' + c.title + '</div><div class="n">' + (c.subtitle||'') + '</div></a>';
+      }).join('');
+    }
+    loadCategories();
+
+    async function loadFaqs(){
+      const el = document.getElementById('faq-list');
+      const { data, error } = await sb.from('faqs').select('*').order('sort_order');
+      if(error || !data || data.length === 0){ el.innerHTML = ''; return; }
+      el.innerHTML = data.map(function(f){
+        return '<details class="faq-item box3d"><summary>' + f.question + '</summary><p>' + f.answer + '</p></details>';
+      }).join('');
+    }
+    loadFaqs();
 
     /* ===================== ระบบสมาชิก (Auth) ===================== */
     let currentUser = null;

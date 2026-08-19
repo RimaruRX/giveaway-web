@@ -194,7 +194,13 @@
                 <input class="field-input" id="ev-limit" type="number" min="1" value="50" />
               </div>
             </div>
-            <button class="submit-btn gloss" type="submit">สร้างกิจกรรม</button>
+            <label class="field-label">รูปรางวัล (ไม่บังคับ)</label>
+            <div id="ev-image-preview-wrap" style="display:none;margin-bottom:10px;">
+              <img id="ev-image-preview" style="width:100%;max-height:160px;object-fit:cover;border-radius:10px;" />
+            </div>
+            <input class="field-input" type="file" id="ev-image-file" accept="image/*" onchange="uploadNewEventImage(this)" />
+            <div class="msg" id="ev-image-msg"></div>
+            <button class="submit-btn gloss" type="submit" style="margin-top:6px;">สร้างกิจกรรม</button>
             <div class="msg" id="create-msg"></div>
           </form>
         </div>
@@ -213,6 +219,16 @@
       </div>
 
       <div class="panel" id="panel-content">
+        <div class="card box3d">
+          <h2>🖼️ รูปแบนเนอร์หลัก (Hero)</h2>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-top:-8px;margin-bottom:16px;">แสดงเหนือหัวข้อในหน้าแรก แนะนำอัตราส่วนกว้าง เช่น 1200×400px</p>
+          <div id="banner-preview-wrap" style="display:none;margin-bottom:14px;">
+            <img id="banner-preview" style="width:100%;border-radius:12px;max-height:220px;object-fit:cover;" />
+          </div>
+          <input class="field-input" type="file" id="banner-file" accept="image/*" onchange="uploadBanner(this)" />
+          <div class="msg" id="banner-msg"></div>
+        </div>
+
         <div class="card box3d">
           <h2>🎨 เนื้อหาส่วน Hero</h2>
           <form id="content-form" onsubmit="return saveSiteContent(event)">
@@ -380,6 +396,67 @@
       checkAdminAndRender();
     });
 
+    /* ---------- image uploads ---------- */
+    let newEventImageUrl = '';
+
+    async function uploadImageFile(file){
+      const ext = file.name.split('.').pop();
+      const path = 'uploads/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
+      const { error } = await sb.storage.from('assets').upload(path, file, { upsert: false });
+      if(error) throw error;
+      const { data } = sb.storage.from('assets').getPublicUrl(path);
+      return data.publicUrl;
+    }
+
+    async function uploadNewEventImage(input){
+      const file = input.files[0];
+      if(!file) return;
+      const msg = document.getElementById('ev-image-msg');
+      msg.className = 'msg'; msg.textContent = 'กำลังอัปโหลด...';
+      try{
+        const url = await uploadImageFile(file);
+        newEventImageUrl = url;
+        document.getElementById('ev-image-preview-wrap').style.display = 'block';
+        document.getElementById('ev-image-preview').src = url;
+        msg.className = 'msg ok'; msg.textContent = 'อัปโหลดสำเร็จ!';
+      } catch(err){
+        msg.className = 'msg error'; msg.textContent = 'อัปโหลดไม่สำเร็จ: ' + err.message;
+      }
+    }
+
+    async function uploadExistingEventImage(eventId, input){
+      const file = input.files[0];
+      if(!file) return;
+      const msgEl = document.getElementById('ev-msg-' + eventId);
+      msgEl.className = 'msg'; msgEl.textContent = 'กำลังอัปโหลดรูป...';
+      try{
+        const url = await uploadImageFile(file);
+        const { error } = await sb.from('events').update({ image_url: url }).eq('id', eventId);
+        if(error) throw error;
+        msgEl.className = 'msg ok'; msgEl.textContent = 'อัปเดตรูปสำเร็จ!';
+        loadEventsAdmin();
+      } catch(err){
+        msgEl.className = 'msg error'; msgEl.textContent = 'อัปโหลดไม่สำเร็จ: ' + err.message;
+      }
+    }
+
+    async function uploadBanner(input){
+      const file = input.files[0];
+      if(!file) return;
+      const msg = document.getElementById('banner-msg');
+      msg.className = 'msg'; msg.textContent = 'กำลังอัปโหลด...';
+      try{
+        const url = await uploadImageFile(file);
+        const { error } = await sb.from('site_settings').update({ hero_banner_url: url }).eq('id', 1);
+        if(error) throw error;
+        document.getElementById('banner-preview-wrap').style.display = 'block';
+        document.getElementById('banner-preview').src = url;
+        msg.className = 'msg ok'; msg.textContent = 'อัปโหลดและบันทึกสำเร็จ! รีเฟรชหน้าเว็บหลักเพื่อดูผล';
+      } catch(err){
+        msg.className = 'msg error'; msg.textContent = 'อัปโหลดไม่สำเร็จ: ' + err.message;
+      }
+    }
+
     /* ---------- events ---------- */
     async function handleCreateEvent(e){
       e.preventDefault();
@@ -392,7 +469,8 @@
         description: document.getElementById('ev-desc').value.trim(),
         prize: document.getElementById('ev-prize').value.trim(),
         slot_limit: parseInt(document.getElementById('ev-limit').value, 10) || 50,
-        status: 'open'
+        status: 'open',
+        image_url: newEventImageUrl || null
       };
 
       const { error } = await sb.from('events').insert(payload);
@@ -405,6 +483,9 @@
       msg.textContent = 'สร้างกิจกรรมสำเร็จ!';
       document.getElementById('create-event-form').reset();
       document.getElementById('ev-limit').value = 50;
+      document.getElementById('ev-image-preview-wrap').style.display = 'none';
+      document.getElementById('ev-image-msg').textContent = '';
+      newEventImageUrl = '';
       loadEventsAdmin();
       return false;
     }
@@ -430,8 +511,12 @@
         const { count } = await sb.from('participants').select('*', { count: 'exact', head: true }).eq('event_id', ev.id);
         const taken = count || 0;
         const statusClass = ev.status === 'open' ? 'status-open' : 'status-closed';
+        const thumb = ev.image_url
+          ? '<img src="' + ev.image_url + '" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:10px;" />'
+          : '';
         html +=
           '<div class="event-row">' +
+            thumb +
             '<div class="top">' +
               '<div><h3>' + ev.title + '</h3><div class="event-meta">' + (ev.prize || '-') + ' · เข้าร่วมแล้ว ' + taken + '/' + ev.slot_limit + ' คน</div></div>' +
               '<span class="status-pill ' + statusClass + '">' + (ev.status === 'open' ? 'เปิดรับ' : 'ปิดแล้ว') + '</span>' +
@@ -442,6 +527,10 @@
                   '<input class="qty-input mono" type="number" min="1" value="1" id="qty-' + ev.id + '" />' +
                   '<button class="btn gloss" onclick="drawWinners(\'' + ev.id + '\')">🎲 สุ่มผู้ชนะ</button>'
                 : '<span style="color:var(--text-muted);font-size:0.85rem;">ปิดรับสมัครแล้ว ไม่สามารถสุ่มซ้ำได้</span>') +
+            '</div>' +
+            '<div style="margin-top:10px;">' +
+              '<label class="field-label" style="margin-bottom:4px;">เปลี่ยน/เพิ่มรูปรางวัล</label>' +
+              '<input class="field-input" type="file" accept="image/*" style="margin-bottom:0;" onchange="uploadExistingEventImage(\'' + ev.id + '\', this)" />' +
             '</div>' +
             '<div class="msg" id="ev-msg-' + ev.id + '"></div>' +
           '</div>';
@@ -512,6 +601,10 @@
       document.getElementById('c-subtitle').value = data.hero_subtitle || '';
       document.getElementById('ad-1').value = data.ad_slot_1 || '';
       document.getElementById('ad-2').value = data.ad_slot_2 || '';
+      if(data.hero_banner_url){
+        document.getElementById('banner-preview-wrap').style.display = 'block';
+        document.getElementById('banner-preview').src = data.hero_banner_url;
+      }
     }
 
     async function saveSiteContent(e){

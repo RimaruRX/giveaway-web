@@ -243,7 +243,11 @@
   }
   .cat-card:active{ transform:translateY(1px); }
   .cat-card:hover{ border-color:var(--gold-3); }
-  .cat-card.has-img{ background-size:cover; background-position:center; min-height:130px; display:flex; align-items:flex-end; }
+  .cat-card.has-img{
+    background-size:cover; background-position:center; min-height:130px; display:flex; align-items:flex-end;
+    border:1px solid rgba(255,255,255,0.10) !important;
+    box-shadow:0 14px 28px -16px rgba(0,0,0,0.7) !important;
+  }
   .cat-card .cat-overlay{
     position:absolute; inset:0;
     background:linear-gradient(180deg, rgba(10,7,8,0.1) 0%, rgba(10,7,8,0.9) 100%);
@@ -711,7 +715,7 @@
         const cls = hasImg ? 'cat-card box3d has-img' : 'cat-card box3d';
         const bgStyle = hasImg ? ' style="background-image:url(\'' + c.image_url + '\')"' : '';
         const overlay = hasImg ? '<div class="cat-overlay"></div>' : '';
-        return '<a class="' + cls + '" href="#prizes"' + bgStyle + '>' + overlay +
+        return '<a class="' + cls + '" href="category.html?cat=' + c.id + '"' + bgStyle + '>' + overlay +
           '<div class="cat-content"><div class="emoji">' + (c.emoji||'') + '</div><div class="t">' + c.title + '</div><div class="n">' + (c.subtitle||'') + '</div></div></a>';
       }).join('');
     }

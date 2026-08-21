@@ -429,6 +429,12 @@
           <h2>📜 ประวัติการหมุนล่าสุด</h2>
           <div id="gacha-spins-list"><p style="color:var(--text-muted);">กำลังโหลด...</p></div>
         </div>
+
+        <div class="card box3d">
+          <h2>👥 จัดการเครดิตสมาชิก</h2>
+          <input class="field-input" type="text" id="member-search" placeholder="ค้นหาด้วยอีเมล..." oninput="renderMembersList()" />
+          <div id="members-list"><p style="color:var(--text-muted);">กำลังโหลด...</p></div>
+        </div>
       </div>
 
     </main>
@@ -530,6 +536,7 @@
         loadGachaSettings();
         loadGachaItemsAdmin();
         loadGachaSpinsAdmin();
+        loadMembersAdmin();
       } else {
         show('denied-view');
       }
@@ -949,6 +956,41 @@
       el.innerHTML = data.map(function(s){
         return '<div class="recent-row"><span>' + s.item_name_snapshot + ' (-' + s.credits_spent + ' เครดิต)</span><span style="color:var(--text-muted);">' + dtFmt.format(new Date(s.spun_at)) + '</span></div>';
       }).join('');
+    }
+
+    /* ---------- member credit management ---------- */
+    let membersCache = [];
+
+    async function loadMembersAdmin(){
+      const el = document.getElementById('members-list');
+      const { data, error } = await sb.rpc('admin_list_members');
+      if(error){ el.innerHTML = '<p style="color:#ff8f8f;">' + error.message + '</p>'; return; }
+      membersCache = data || [];
+      renderMembersList();
+    }
+
+    function renderMembersList(){
+      const el = document.getElementById('members-list');
+      const q = (document.getElementById('member-search').value || '').trim().toLowerCase();
+      const filtered = membersCache.filter(function(m){ return !q || (m.email || '').toLowerCase().includes(q); });
+      if(filtered.length === 0){ el.innerHTML = '<p style="color:var(--text-muted);">ไม่พบสมาชิก</p>'; return; }
+      el.innerHTML = filtered.map(function(m){
+        return '<div class="list-row">' +
+          '<div class="txt"><b>' + m.email + '</b><small>เครดิตปัจจุบัน: ' + m.balance + '</small></div>' +
+          '<div style="display:flex;gap:8px;align-items:center;">' +
+            '<input class="qty-input mono" type="number" id="credit-input-' + m.user_id + '" value="' + m.balance + '" style="width:90px;" />' +
+            '<button class="btn btn-ghost btn-small" onclick="saveMemberCredit(\'' + m.user_id + '\')">บันทึก</button>' +
+          '</div></div>';
+      }).join('');
+    }
+
+    async function saveMemberCredit(userId){
+      const input = document.getElementById('credit-input-' + userId);
+      const newBalance = parseInt(input.value, 10);
+      if(isNaN(newBalance)){ alert('กรุณากรอกตัวเลข'); return; }
+      const { error } = await sb.rpc('admin_set_credit', { p_user_id: userId, p_balance: newBalance });
+      if(error){ alert('บันทึกไม่สำเร็จ: ' + error.message); return; }
+      loadMembersAdmin();
     }
 
     /* ---------- categories ---------- */

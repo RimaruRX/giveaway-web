@@ -181,6 +181,7 @@
         <button class="side-link" data-panel="categories" onclick="switchPanel('categories')">📂 หมวดหมู่</button>
         <button class="side-link" data-panel="faqs" onclick="switchPanel('faqs')">❓ คำถามที่พบบ่อย</button>
         <button class="side-link" data-panel="ads" onclick="switchPanel('ads')">📢 โฆษณา</button>
+        <button class="side-link" data-panel="gacha" onclick="switchPanel('gacha')">🎰 เครดิต & ไอเทมสุ่ม</button>
       </nav>
       <button class="btn btn-ghost" onclick="handleSignOut()">ออกจากระบบ</button>
     </aside>
@@ -362,6 +363,74 @@
         </div>
       </div>
 
+      <div class="panel" id="panel-gacha">
+        <div class="card box3d">
+          <h2>🐾 มาสคอต & ตั้งค่าเครดิต</h2>
+          <div id="gacha-mascot-preview-wrap" style="display:none;margin-bottom:14px;">
+            <img id="gacha-mascot-preview" style="width:80px;height:80px;border-radius:50%;object-fit:cover;" />
+          </div>
+          <label class="field-label">อัปโหลด/เปลี่ยนโลโก้มาสคอต</label>
+          <input class="field-input" type="file" id="mascot-file" accept="image/*" onchange="uploadMascot(this)" />
+          <div class="msg" id="mascot-msg"></div>
+
+          <form id="gacha-settings-form" onsubmit="return saveGachaSettings(event)" style="margin-top:10px;">
+            <div class="field-row">
+              <div>
+                <label class="field-label">เครดิตที่ได้ต่อการดูโฆษณา 1 ครั้ง</label>
+                <input class="field-input" type="number" min="1" id="g-ad-reward" />
+              </div>
+              <div>
+                <label class="field-label">เวลารอระหว่างดูโฆษณา (วินาที)</label>
+                <input class="field-input" type="number" min="10" id="g-ad-cooldown" />
+              </div>
+            </div>
+            <label class="field-label">ค่าใช้จ่ายต่อการหมุน 1 ครั้ง (เครดิต)</label>
+            <input class="field-input" type="number" min="1" id="g-cost" />
+            <label class="field-label">โค้ดโฆษณาสำหรับหน้าเครดิต (Rewarded Ad)</label>
+            <textarea class="field-textarea code" id="g-ad-code" placeholder="วางโค้ด Ad ที่นี่ (HTML/JS)"></textarea>
+            <button class="submit-btn gloss" type="submit">บันทึกการตั้งค่า</button>
+            <div class="msg" id="gacha-settings-msg"></div>
+          </form>
+        </div>
+
+        <div class="card box3d">
+          <h2>➕ เพิ่มไอเทมสุ่ม</h2>
+          <form id="gacha-item-form" onsubmit="return addGachaItem(event)">
+            <label class="field-label">ชื่อไอเทม</label>
+            <input class="field-input" id="gi-name" required placeholder="เช่น 50 Robux" />
+            <div class="field-row">
+              <div>
+                <label class="field-label">จำนวนคงเหลือ (-1 = ไม่จำกัด)</label>
+                <input class="field-input" type="number" id="gi-stock" value="-1" />
+              </div>
+              <div>
+                <label class="field-label">อัตราดรอป (%)</label>
+                <input class="field-input" type="number" step="0.01" min="0" max="100" id="gi-rate" required />
+              </div>
+            </div>
+            <label class="field-label">รูปไอเทม (ไม่บังคับ)</label>
+            <div id="gi-image-preview-wrap" style="display:none;margin-bottom:10px;">
+              <img id="gi-image-preview" style="width:70px;height:70px;object-fit:cover;border-radius:10px;" />
+            </div>
+            <input class="field-input" type="file" id="gi-image-file" accept="image/*" onchange="uploadNewGachaItemImage(this)" />
+            <div class="msg" id="gi-image-msg"></div>
+            <button class="submit-btn gloss" type="submit" style="margin-top:6px;">เพิ่มไอเทม</button>
+            <div class="msg" id="gi-msg"></div>
+          </form>
+        </div>
+
+        <div class="card box3d">
+          <h2>🎁 ไอเทมทั้งหมด</h2>
+          <div id="rate-total-indicator" style="margin-bottom:12px;font-size:0.85rem;"></div>
+          <div id="gacha-items-list"><p style="color:var(--text-muted);">กำลังโหลด...</p></div>
+        </div>
+
+        <div class="card box3d">
+          <h2>📜 ประวัติการหมุนล่าสุด</h2>
+          <div id="gacha-spins-list"><p style="color:var(--text-muted);">กำลังโหลด...</p></div>
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -458,6 +527,9 @@
         loadSiteSettingsAdmin();
         loadFaqsAdmin();
         loadOverviewStats();
+        loadGachaSettings();
+        loadGachaItemsAdmin();
+        loadGachaSpinsAdmin();
       } else {
         show('denied-view');
       }
@@ -729,6 +801,154 @@
       if(error){ msg.className = 'msg error'; msg.textContent = error.message; return false; }
       msg.className = 'msg ok'; msg.textContent = 'บันทึกโค้ดโฆษณาแล้ว!';
       return false;
+    }
+
+    /* ---------- credits & gacha ---------- */
+    async function loadGachaSettings(){
+      const { data } = await sb.from('site_settings').select('*').eq('id', 1).maybeSingle();
+      if(!data) return;
+      document.getElementById('g-ad-reward').value = data.ad_reward_credits || 5;
+      document.getElementById('g-ad-cooldown').value = data.ad_cooldown_seconds || 60;
+      document.getElementById('g-cost').value = data.gacha_cost || 10;
+      document.getElementById('g-ad-code').value = data.ad_slot_rewarded || '';
+      if(data.mascot_url){
+        document.getElementById('gacha-mascot-preview-wrap').style.display = 'block';
+        document.getElementById('gacha-mascot-preview').src = data.mascot_url;
+      }
+    }
+
+    async function uploadMascot(input){
+      const file = input.files[0];
+      if(!file) return;
+      const msg = document.getElementById('mascot-msg');
+      msg.className = 'msg'; msg.textContent = 'กำลังอัปโหลด...';
+      try{
+        const url = await uploadImageFile(file);
+        const { error } = await sb.from('site_settings').update({ mascot_url: url }).eq('id', 1);
+        if(error) throw error;
+        document.getElementById('gacha-mascot-preview-wrap').style.display = 'block';
+        document.getElementById('gacha-mascot-preview').src = url;
+        msg.className = 'msg ok'; msg.textContent = 'อัปโหลดมาสคอตสำเร็จ!';
+      } catch(err){
+        msg.className = 'msg error'; msg.textContent = 'อัปโหลดไม่สำเร็จ: ' + err.message;
+      }
+    }
+
+    async function saveGachaSettings(e){
+      e.preventDefault();
+      const msg = document.getElementById('gacha-settings-msg');
+      msg.className = 'msg'; msg.textContent = 'กำลังบันทึก...';
+      const payload = {
+        ad_reward_credits: parseInt(document.getElementById('g-ad-reward').value, 10) || 5,
+        ad_cooldown_seconds: parseInt(document.getElementById('g-ad-cooldown').value, 10) || 60,
+        gacha_cost: parseInt(document.getElementById('g-cost').value, 10) || 10,
+        ad_slot_rewarded: document.getElementById('g-ad-code').value
+      };
+      const { error } = await sb.from('site_settings').update(payload).eq('id', 1);
+      if(error){ msg.className = 'msg error'; msg.textContent = error.message; return false; }
+      msg.className = 'msg ok'; msg.textContent = 'บันทึกแล้ว!';
+      return false;
+    }
+
+    let newGachaItemImageUrl = '';
+
+    async function uploadNewGachaItemImage(input){
+      const file = input.files[0];
+      if(!file) return;
+      const msg = document.getElementById('gi-image-msg');
+      msg.className = 'msg'; msg.textContent = 'กำลังอัปโหลด...';
+      try{
+        const url = await uploadImageFile(file);
+        newGachaItemImageUrl = url;
+        document.getElementById('gi-image-preview-wrap').style.display = 'block';
+        document.getElementById('gi-image-preview').src = url;
+        msg.className = 'msg ok'; msg.textContent = 'อัปโหลดสำเร็จ!';
+      } catch(err){
+        msg.className = 'msg error'; msg.textContent = 'อัปโหลดไม่สำเร็จ: ' + err.message;
+      }
+    }
+
+    async function addGachaItem(e){
+      e.preventDefault();
+      const msg = document.getElementById('gi-msg');
+      msg.className = 'msg'; msg.textContent = 'กำลังบันทึก...';
+      const payload = {
+        name: document.getElementById('gi-name').value.trim(),
+        stock: parseInt(document.getElementById('gi-stock').value, 10),
+        drop_rate: parseFloat(document.getElementById('gi-rate').value) || 0,
+        image_url: newGachaItemImageUrl || null,
+        active: true,
+        sort_order: 99
+      };
+      const { error } = await sb.from('gacha_items').insert(payload);
+      if(error){ msg.className = 'msg error'; msg.textContent = error.message; return false; }
+      msg.className = 'msg ok'; msg.textContent = 'เพิ่มไอเทมแล้ว!';
+      document.getElementById('gacha-item-form').reset();
+      document.getElementById('gi-stock').value = -1;
+      document.getElementById('gi-image-preview-wrap').style.display = 'none';
+      document.getElementById('gi-image-msg').textContent = '';
+      newGachaItemImageUrl = '';
+      loadGachaItemsAdmin();
+      return false;
+    }
+
+    async function loadGachaItemsAdmin(){
+      const el = document.getElementById('gacha-items-list');
+      const { data, error } = await sb.from('gacha_items').select('*').order('sort_order');
+      if(error){ el.innerHTML = '<p style="color:#ff8f8f;">' + error.message + '</p>'; return; }
+
+      const totalRate = (data || []).filter(function(i){ return i.active; }).reduce(function(s,i){ return s + Number(i.drop_rate); }, 0);
+      const indicator = document.getElementById('rate-total-indicator');
+      const isExact = Math.abs(totalRate - 100) < 0.01;
+      indicator.innerHTML = 'รวมอัตราดรอปของไอเทมที่เปิดใช้งาน: <b style="color:' + (isExact ? 'var(--live)' : '#ff9b9b') + ';">' + totalRate.toFixed(2) + '%</b>' +
+        (isExact ? ' ✓ ครบ 100%' : ' — ควรปรับให้รวมเป็น 100% พอดี');
+
+      if(!data || data.length === 0){ el.innerHTML = '<p style="color:var(--text-muted);">ยังไม่มีไอเทม</p>'; return; }
+
+      el.innerHTML = data.map(function(it){
+        const thumb = it.image_url ? '<img src="' + it.image_url + '" style="width:44px;height:44px;object-fit:cover;border-radius:8px;margin-right:10px;" />' : '';
+        return '<div class="list-row" style="align-items:flex-start;">' +
+          '<div class="txt" style="display:flex;align-items:center;">' + thumb + '<span><b>' + it.name + '</b><small>' + (it.active ? 'เปิดใช้งาน' : 'ปิดใช้งาน') + '</small></span></div>' +
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+            '<input class="qty-input mono" type="number" step="0.01" value="' + it.drop_rate + '" style="width:70px;" id="rate-' + it.id + '" />' +
+            '<input class="qty-input mono" type="number" value="' + it.stock + '" style="width:60px;" id="stock-' + it.id + '" />' +
+            '<button class="btn btn-ghost btn-small" onclick="updateGachaItem(\'' + it.id + '\')">บันทึก</button>' +
+            '<button class="btn btn-ghost btn-small" onclick="toggleGachaItemActive(\'' + it.id + '\', ' + !it.active + ')">' + (it.active ? 'ปิด' : 'เปิด') + '</button>' +
+            '<button class="btn btn-danger btn-small" onclick="deleteGachaItem(\'' + it.id + '\')">ลบ</button>' +
+          '</div></div>';
+      }).join('');
+    }
+
+    async function updateGachaItem(id){
+      const rate = parseFloat(document.getElementById('rate-' + id).value) || 0;
+      const stock = parseInt(document.getElementById('stock-' + id).value, 10);
+      const { error } = await sb.from('gacha_items').update({ drop_rate: rate, stock: stock }).eq('id', id);
+      if(error){ alert(error.message); return; }
+      loadGachaItemsAdmin();
+    }
+
+    async function toggleGachaItemActive(id, newState){
+      const { error } = await sb.from('gacha_items').update({ active: newState }).eq('id', id);
+      if(error){ alert(error.message); return; }
+      loadGachaItemsAdmin();
+    }
+
+    async function deleteGachaItem(id){
+      if(!confirm('ลบไอเทมนี้?')) return;
+      const { error } = await sb.from('gacha_items').delete().eq('id', id);
+      if(error){ alert(error.message); return; }
+      loadGachaItemsAdmin();
+    }
+
+    async function loadGachaSpinsAdmin(){
+      const el = document.getElementById('gacha-spins-list');
+      const { data, error } = await sb.from('gacha_spins').select('item_name_snapshot, credits_spent, spun_at').order('spun_at', { ascending: false }).limit(20);
+      if(error){ el.innerHTML = '<p style="color:#ff8f8f;">' + error.message + '</p>'; return; }
+      if(!data || data.length === 0){ el.innerHTML = '<p style="color:var(--text-muted);">ยังไม่มีประวัติการหมุน</p>'; return; }
+      const dtFmt = new Intl.DateTimeFormat('th-TH', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+      el.innerHTML = data.map(function(s){
+        return '<div class="recent-row"><span>' + s.item_name_snapshot + ' (-' + s.credits_spent + ' เครดิต)</span><span style="color:var(--text-muted);">' + dtFmt.format(new Date(s.spun_at)) + '</span></div>';
+      }).join('');
     }
 
     /* ---------- categories ---------- */

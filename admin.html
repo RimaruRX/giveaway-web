@@ -737,7 +737,7 @@
       const el = document.getElementById('winners-list');
       const { data: winners, error } = await sb
         .from('winners')
-        .select('announced_at, events(title, prize), participants(display_name)')
+        .select('id, announced_at, delivery_status, events(title, prize), participants(display_name)')
         .order('announced_at', { ascending: false })
         .limit(30);
 
@@ -754,8 +754,23 @@
       el.innerHTML = winners.map(function(w){
         const name = w.participants ? w.participants.display_name : '-';
         const title = w.events ? w.events.title : '-';
-        return '<div class="winner-row"><span><b>' + name + '</b> — ' + title + '</span><span>' + dtFmt.format(new Date(w.announced_at)) + '</span></div>';
+        const delivered = w.delivery_status === 'delivered';
+        const badge = '<span class="status-pill ' + (delivered ? 'status-open' : 'status-closed') + '">' + (delivered ? 'ส่งแล้ว ✓' : 'รอส่งของ') + '</span>';
+        const toggleBtn = '<button class="btn btn-small ' + (delivered ? 'btn-ghost' : 'gloss') + '" onclick="toggleDeliveryStatus(\'' + w.id + '\', ' + !delivered + ')">' + (delivered ? 'ยกเลิกสถานะส่งแล้ว' : 'ทำเครื่องหมายว่าส่งแล้ว') + '</button>';
+        return '<div class="winner-row" style="flex-direction:column;align-items:flex-start;gap:8px;">' +
+          '<div style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:8px;"><span><b>' + name + '</b> — ' + title + '</span><span>' + dtFmt.format(new Date(w.announced_at)) + '</span></div>' +
+          '<div style="display:flex;gap:10px;align-items:center;">' + badge + toggleBtn + '</div>' +
+        '</div>';
       }).join('');
+    }
+
+    async function toggleDeliveryStatus(winnerId, markDelivered){
+      const payload = markDelivered
+        ? { delivery_status: 'delivered', delivered_at: new Date().toISOString() }
+        : { delivery_status: 'pending', delivered_at: null };
+      const { error } = await sb.from('winners').update(payload).eq('id', winnerId);
+      if(error){ alert('อัปเดตไม่สำเร็จ: ' + error.message); return; }
+      loadWinnersAdmin();
     }
 
     /* ---------- site content ---------- */

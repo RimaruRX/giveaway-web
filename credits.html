@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>เครดิต & สุ่มไอเทม — แจกจริง</title>
+<meta name="description" content="สะสมเครดิตจากการดูโฆษณา แลกไอเทมสุ่มแบบสล็อต" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&family=Chonburi&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0708;
+    --bg-2:#160f10;
+    --bg-3:#1e1415;
+    --red:#e2141c;
+    --red-2:#a80d13;
+    --red-glow:rgba(226,20,28,0.35);
+    --black-deep:#1a0404;
+
+    --gold-1:#fff6d8;
+    --gold-2:#f3cc5c;
+    --gold-3:#c8960f;
+    --gold-4:#7a5a0c;
+    --gold-text:#3a2405;
+
+    --text:#f7ece0;
+    --text-muted:#b79a94;
+    --line:rgba(247,236,224,0.12);
+    --live:#2ee673;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Kanit', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Kanit',sans-serif; font-weight:800; margin:0; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  a{ color:inherit; }
+  img{max-width:100%;display:block;}
+  :focus-visible{ outline:2px solid var(--gold-2); outline-offset:3px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  .wrap{ max-width:1100px; margin:0 auto; padding:0 22px; }
+
+  /* ===== glossy gold surface (signature element) ===== */
+  .gloss{
+    position:relative;
+    background:linear-gradient(160deg, var(--gold-1) 0%, var(--gold-2) 38%, var(--gold-3) 72%, var(--gold-4) 100%);
+    color:var(--gold-text);
+    border:1px solid rgba(255,244,200,0.7);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.85),
+      inset 0 -10px 16px rgba(0,0,0,0.28),
+      0 14px 30px -12px rgba(0,0,0,0.65);
+    overflow:hidden;
+  }
+  .gloss::before{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(115deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 22%, transparent 40%);
+    pointer-events:none;
+  }
+  .gloss::after{
+    content:"";
+    position:absolute; left:-30%; top:-60%; width:60%; height:220%;
+    background:linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.35) 48%, transparent 56%);
+    transform:rotate(8deg);
+    pointer-events:none;
+  }
+
+  /* ===== raised / embossed dark box (applied to all content cards) ===== */
+  .box3d{
+    background:linear-gradient(165deg, var(--bg-3) 0%, var(--bg-2) 75%);
+    border:1px solid rgba(247,236,224,0.09);
+    border-top-color:rgba(247,236,224,0.22);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      inset 0 -16px 26px rgba(0,0,0,0.42),
+      0 18px 32px -18px rgba(0,0,0,0.8);
+  }
+
+  /* ===== decorative textured title (signage-style font effect) ===== */
+  .deco-title{
+    font-family:'Chonburi', 'Kanit', sans-serif;
+    font-weight:400;
+    letter-spacing:0.01em;
+    color:var(--gold-2); /* fallback for browsers without background-clip:text */
+    background:
+      radial-gradient(circle at 22% 28%, rgba(255,255,255,0.55) 0 2px, transparent 3px),
+      radial-gradient(circle at 68% 62%, rgba(255,255,255,0.4) 0 1.5px, transparent 2.5px),
+      radial-gradient(circle at 45% 80%, rgba(120,70,0,0.4) 0 1.5px, transparent 2.5px),
+      repeating-linear-gradient(128deg,
+        #fff6d8 0px, #fff6d8 4px,
+        #f3cc5c 4px 10px,
+        #d9a521 10px 14px,
+        #f3cc5c 14px 20px);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    -webkit-text-stroke:3px var(--black-deep);
+    text-shadow:
+      0 2px 0 var(--red-2),
+      0 5px 0 var(--red-2),
+      0 8px 0 var(--black-deep),
+      0 12px 18px rgba(0,0,0,0.65);
+  }
+  .ribbon{
+    background:var(--black-deep);
+    color:#ffe7c2;
+    font-size:0.82rem;
+    font-weight:500;
+    text-align:center;
+    padding:8px 12px;
+    border-bottom:1px solid rgba(226,20,28,0.4);
+  }
+  .ribbon strong{ color:var(--gold-2); font-weight:700; }
+  .ribbon .live-dot{
+    display:inline-block; width:7px; height:7px; border-radius:50%;
+    background:var(--live); margin-right:6px;
+    animation:pulse 1.4s infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+  /* ===== nav ===== */
+  header.nav{
+    position:sticky; top:0; z-index:40;
+    background:rgba(10,7,8,0.9);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:14px 22px; gap:16px; }
+  .brand{ display:flex; align-items:center; gap:8px; font-size:1.2rem; font-weight:800; color:var(--gold-2); }
+  .nav-links{ display:flex; gap:22px; font-size:0.92rem; font-weight:500; color:var(--text-muted); }
+  .nav-links a:hover{ color:var(--gold-2); }
+  .nav-actions{ display:flex; gap:10px; }
+  .btn-ghost{
+    border:1.5px solid var(--gold-3); color:var(--gold-2); font-weight:600;
+    padding:9px 16px; border-radius:8px; text-decoration:none; font-size:0.88rem;
+  }
+  .btn-solid{
+    background:linear-gradient(135deg,var(--red),var(--red-2)); color:#fff; font-weight:700;
+    padding:10px 18px; border-radius:8px; text-decoration:none; font-size:0.88rem;
+    box-shadow:0 8px 18px -8px var(--red-glow);
+  }
+  @media (max-width:760px){ .nav-links{ display:none; } }
+
+  /* ===== hero ===== */
+  .hero{
+    background:
+      radial-gradient(60% 70% at 15% 0%, rgba(226,20,28,0.35), transparent 60%),
+      radial-gradient(50% 60% at 90% 10%, rgba(243,204,92,0.14), transparent 65%),
+      linear-gradient(180deg, var(--black-deep) 0%, var(--bg) 60%);
+    color:#fff;
+    padding:56px 0 44px;
+    position:relative;
+    overflow:hidden;
+    border-bottom:1px solid rgba(226,20,28,0.25);
+  }
+  .hero-inner{ position:relative; text-align:center; }
+  .badge-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(226,20,28,0.18);
+    border:1px solid rgba(226,20,28,0.55);
+    padding:6px 16px; border-radius:999px;
+    font-size:0.8rem; font-weight:600; margin-bottom:20px;
+    color:#ffd9d9;
+  }
+  .hero h1{
+    font-size:clamp(1.9rem, 4.6vw, 3.1rem);
+    line-height:1.28;
+  }
+  .hero p.sub{
+    margin:16px auto 0; max-width:52ch; color:var(--text-muted); font-size:1.02rem;
+  }
+  .hero-actions{ display:flex; gap:12px; justify-content:center; margin-top:28px; flex-wrap:wrap; }
+  .btn-cta.gloss{
+    padding:16px 32px; border-radius:12px; text-decoration:none; font-size:1.02rem; font-weight:800;
+    display:inline-block;
+  }
+  .btn-cta-outline{
+    border:1.5px solid rgba(247,236,224,0.35); color:#fff; font-weight:600;
+    padding:15px 26px; border-radius:12px; text-decoration:none;
+  }
+
+  /* ===== stats bar (glossy gold chips) ===== */
+  .stats{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-top:40px;
+  }
+  .stats .cell.gloss{ border-radius:14px; padding:18px 10px; text-align:center; }
+  .stats .num{ position:relative; font-size:1.5rem; font-weight:800; font-family:'IBM Plex Mono',monospace; }
+  .stats .lab{ position:relative; font-size:0.74rem; margin-top:4px; font-weight:600; opacity:0.85; }
+  @media (max-width:640px){ .stats{ grid-template-columns:repeat(2,1fr);} }
+
+  section{ padding:52px 0; }
+  .section-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+  .section-head .kicker{
+    color:var(--gold-2); font-size:0.78rem; font-weight:700; letter-spacing:0.06em;
+    text-transform:uppercase; margin-bottom:6px; display:block;
+  }
+  .section-head h2{ font-size:clamp(1.35rem,2.4vw,1.8rem); color:var(--text); }
+
+  /* ===== live drops ===== */
+  .live-head{ display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .live-tag{
+    background:var(--live); color:#04150a; font-size:0.72rem; font-weight:700;
+    padding:3px 10px; border-radius:999px; display:inline-flex; align-items:center; gap:5px;
+  }
+  .live-tag .dot{ width:6px; height:6px; background:#04150a; border-radius:50%; animation:pulse 1.2s infinite; }
+
+  .drop-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:18px; }
+  .drop-card{
+    border-radius:16px;
+    padding:22px; display:flex; flex-direction:column; gap:10px;
+  }
+  .drop-card h3{ font-size:1.08rem; color:var(--text); }
+  .drop-card .drop-time{ color:var(--text-muted); font-size:0.86rem; }
+  .drop-count{ display:flex; gap:8px; margin-top:6px; }
+  .drop-count .u.gloss{
+    border-radius:8px; padding:8px 10px; text-align:center; min-width:52px;
+  }
+  .drop-count .u .n{ position:relative; font-family:'IBM Plex Mono',monospace; font-weight:800; }
+  .drop-count .u .l{ position:relative; font-size:0.64rem; font-weight:600; opacity:0.8; }
+  @media (max-width:700px){ .drop-grid{ grid-template-columns:1fr; } }
+
+  /* ===== categories ===== */
+  .cat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .cat-card{
+    border-radius:14px;
+    padding:20px 14px; text-align:center; text-decoration:none; color:var(--text);
+    transition:transform 0.15s ease;
+    position:relative; overflow:hidden;
+  }
+  .cat-card:active{ transform:translateY(1px); }
+  .cat-card:hover{ border-color:var(--gold-3); }
+  .cat-card.has-img{
+    background-size:cover; background-position:center; min-height:130px; display:flex; align-items:flex-end;
+    border:1px solid rgba(255,255,255,0.10) !important;
+    box-shadow:0 14px 28px -16px rgba(0,0,0,0.7) !important;
+  }
+  .cat-card .cat-overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(10,7,8,0.1) 0%, rgba(10,7,8,0.9) 100%);
+    z-index:0;
+  }
+  .cat-card .cat-content{ position:relative; z-index:1; width:100%; }
+  .cat-card .emoji{ font-size:1.6rem; margin-bottom:8px; }
+  .cat-card .t{ font-weight:600; font-size:0.92rem; }
+  .cat-card .n{ color:var(--text-muted); font-size:0.76rem; margin-top:4px; }
+  @media (max-width:760px){ .cat-grid{ grid-template-columns:repeat(2,1fr);} }
+
+  /* ===== prize cards ===== */
+  .prize-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .prize-card{
+    border-radius:16px;
+    overflow:hidden;
+  }
+  .prize-top.gloss{ padding:24px 20px 18px; }
+  .prize-top .rank{ position:relative; font-size:0.76rem; font-weight:700; opacity:0.75; }
+  .prize-top h3{ position:relative; font-size:1.2rem; margin-top:6px; }
+  .prize-body{ padding:18px 20px 22px; }
+  .prize-body p{ color:var(--text-muted); font-size:0.9rem; margin:0 0 14px; }
+  .slot-bar{ background:var(--bg-3); border-radius:999px; height:7px; overflow:hidden; }
+  .slot-fill{ height:100%; background:linear-gradient(90deg,var(--red-2),var(--red)); }
+  .slot-label{ font-size:0.78rem; color:var(--gold-2); font-weight:600; margin-top:8px; }
+  @media (max-width:860px){ .prize-grid{ grid-template-columns:1fr; } }
+
+  /* ===== steps ===== */
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .step{ border-radius:14px; padding:22px; }
+  .step .n.gloss{
+    width:34px; height:34px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-family:'IBM Plex Mono',monospace; margin-bottom:12px;
+  }
+  .step .n span{ position:relative; }
+  .step h3{ font-size:1rem; margin-bottom:6px; color:var(--text); }
+  .step p{ color:var(--text-muted); font-size:0.88rem; margin:0; }
+  @media (max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+  /* ===== faq ===== */
+  .faq-item{
+    border-radius:12px;
+    padding:4px 20px; margin-bottom:10px;
+  }
+  .faq-item summary{
+    cursor:pointer; padding:16px 0; font-weight:600; font-size:0.95rem;
+    list-style:none; display:flex; justify-content:space-between; align-items:center;
+    color:var(--text);
+  }
+  .faq-item summary::-webkit-details-marker{ display:none; }
+  .faq-item summary::after{ content:"+"; color:var(--gold-2); font-size:1.2rem; }
+  .faq-item[open] summary::after{ content:"–"; }
+  .faq-item p{ color:var(--text-muted); font-size:0.9rem; padding-bottom:16px; margin:0; }
+
+  /* ad slot */
+  .ad-slot{
+    border:1px dashed rgba(200,150,15,0.4); border-radius:12px; padding:22px; text-align:center;
+    color:var(--text-muted); font-size:0.85rem; background:var(--bg-2);
+  }
+  .ad-slot .tag{ font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold-2); display:block; margin-bottom:6px; font-weight:700; }
+
+  footer{ border-top:1px solid var(--line); padding:30px 0; color:var(--text-muted); font-size:0.85rem; background:var(--bg-2); }
+  .footer-inner{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+
+  /* ===== auth modal ===== */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.72);
+    display:none; align-items:center; justify-content:center;
+    z-index:100; padding:20px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal-box{
+    width:100%; max-width:380px; border-radius:18px; padding:28px;
+    position:relative;
+  }
+  .modal-close{
+    position:absolute; top:14px; right:16px; background:none; border:none;
+    color:var(--text-muted); font-size:1.3rem; cursor:pointer; line-height:1;
+  }
+  .modal-tabs{ display:flex; gap:8px; margin-bottom:20px; }
+  .modal-tab{
+    flex:1; text-align:center; padding:10px; border-radius:10px; cursor:pointer;
+    font-weight:600; font-size:0.9rem; color:var(--text-muted);
+    background:var(--bg-3); border:1px solid var(--line);
+  }
+  .modal-tab.active{ color:var(--gold-2); border-color:var(--gold-3); }
+  .modal-title{ font-size:1.15rem; margin-bottom:16px; color:var(--text); }
+  .field-label{ font-size:0.82rem; color:var(--text-muted); margin-bottom:6px; display:block; }
+  .field-input{
+    width:100%; padding:12px 14px; border-radius:10px; margin-bottom:14px;
+    background:var(--bg); border:1px solid var(--line); color:var(--text);
+    font-family:'Kanit',sans-serif; font-size:0.95rem;
+  }
+  .field-input:focus{ outline:none; border-color:var(--gold-3); }
+  .modal-submit{
+    width:100%; padding:13px; border-radius:10px; border:none; cursor:pointer;
+    font-weight:800; font-size:0.98rem; margin-top:4px;
+  }
+  .modal-msg{ font-size:0.85rem; margin-top:12px; text-align:center; min-height:18px; }
+  .modal-msg.error{ color:#ff8f8f; }
+  .modal-msg.ok{ color:#7be89c; }
+  .nav-user{ display:flex; align-items:center; gap:12px; font-size:0.85rem; color:var(--text-muted); }
+  .nav-user b{ color:var(--gold-2); }
+
+  /* ===== credits page specific ===== */
+  .credit-hero{
+    display:flex; align-items:center; gap:20px; padding:26px; flex-wrap:wrap;
+  }
+  .mascot-img{ width:84px; height:84px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+  .mascot-fallback{
+    width:84px; height:84px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:2.4rem;
+    background:linear-gradient(160deg, var(--gold-1), var(--gold-3));
+  }
+  .credit-balance-num{ font-size:2.4rem; font-weight:800; font-family:'IBM Plex Mono',monospace; color:var(--gold-2); line-height:1; }
+  .credit-balance-lab{ color:var(--text-muted); font-size:0.85rem; margin-top:4px; }
+
+  .ad-watch-box{ text-align:center; padding:8px 0; }
+  .ad-frame{
+    border:1px dashed rgba(200,150,15,0.4); border-radius:12px; padding:30px;
+    color:var(--text-muted); font-size:0.9rem; background:var(--bg-3); margin-bottom:16px;
+    min-height:90px; display:flex; align-items:center; justify-content:center;
+  }
+  .watch-btn{
+    padding:14px 30px; border-radius:12px; font-weight:800; font-size:1rem; border:none; cursor:pointer;
+  }
+  .watch-btn:disabled{ opacity:0.55; cursor:not-allowed; }
+
+  .reel-wrap{ display:flex; flex-direction:column; align-items:center; gap:18px; }
+  .reel-viewport{
+    width:100%; max-width:420px; height:130px; overflow:hidden; position:relative;
+    border-radius:16px; border:1px solid var(--line); background:var(--bg-3);
+  }
+  .reel-viewport::before, .reel-viewport::after{
+    content:""; position:absolute; top:0; bottom:0; width:60px; z-index:2; pointer-events:none;
+  }
+  .reel-viewport::before{ left:0; background:linear-gradient(90deg, var(--bg-3) 0%, transparent 100%); }
+  .reel-viewport::after{ right:0; background:linear-gradient(270deg, var(--bg-3) 0%, transparent 100%); }
+  .reel-pointer{
+    position:absolute; left:50%; top:-2px; bottom:-2px; width:2px; transform:translateX(-50%);
+    background:var(--gold-2); z-index:3; box-shadow:0 0 12px 2px rgba(243,204,92,0.6);
+  }
+  .reel-track{ display:flex; align-items:center; height:100%; padding-left:50%; will-change:transform; }
+  .reel-item{
+    width:98px; height:98px; flex-shrink:0; margin:0 6px; border-radius:12px;
+    background:var(--bg); border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; font-size:1.6rem;
+  }
+  .reel-item img{ width:100%; height:100%; object-fit:cover; }
+  .reel-item.win{ border-color:var(--gold-2); box-shadow:0 0 18px 2px rgba(243,204,92,0.5); }
+
+  .spin-btn{
+    padding:15px 34px; border-radius:12px; font-weight:800; font-size:1.02rem; border:none; cursor:pointer;
+  }
+  .spin-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .spin-msg{ min-height:20px; font-size:0.9rem; }
+  .spin-msg.error{ color:#ff8f8f; }
+  .spin-msg.ok{ color:#7be89c; font-weight:700; }
+
+  .item-table-row{
+    display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px;
+    background:var(--bg-3); border:1px solid var(--line); margin-bottom:8px; font-size:0.88rem;
+  }
+  .item-table-row img{ width:36px; height:36px; border-radius:8px; object-fit:cover; flex-shrink:0; }
+  .item-table-row .name{ flex:1; }
+  .item-table-row .rate{ color:var(--gold-2); font-weight:700; font-family:'IBM Plex Mono',monospace; }
+  .item-table-row .stock{ color:var(--text-muted); font-size:0.78rem; }
+</style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a href="index.html" style="text-decoration:none;"><div class="brand">🔴 <span class="deco-title" style="font-size:1.3rem;">แจกจริง</span></div></a>
+      <nav class="nav-links">
+        <a href="index.html">หน้าแรก</a>
+        <a href="#watch">รับเครดิต</a>
+        <a href="#gacha">สุ่มไอเทม</a>
+      </nav>
+      <div class="nav-actions" id="nav-auth-area">
+        <button class="btn-ghost" type="button" onclick="openAuthModal('login')">เข้าสู่ระบบ</button>
+        <button class="btn-solid" type="button" onclick="openAuthModal('signup')">สมัครสมาชิก</button>
+      </div>
+    </div>
+  </header>
+
+  <section style="padding:36px 0 10px;">
+    <div class="wrap">
+      <div class="box3d credit-hero">
+        <img id="mascot-img" class="mascot-img" style="display:none;" />
+        <div class="mascot-fallback" id="mascot-fallback">🐾</div>
+        <div>
+          <div class="credit-balance-num" id="credit-balance">–</div>
+          <div class="credit-balance-lab">เครดิตของคุณ</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="watch">
+    <div class="wrap">
+      <div class="section-head">
+        <div><span class="kicker">รับเครดิตฟรี</span><h2>ดูโฆษณาเพื่อรับเครดิต</h2></div>
+      </div>
+      <div class="box3d ad-watch-box" style="padding:26px;">
+        <div class="ad-frame" id="ad-frame">พื้นที่โฆษณา</div>
+        <button class="watch-btn gloss" id="watch-btn" type="button" onclick="startWatchAd()">▶️ ดูโฆษณาเพื่อรับเครดิต</button>
+        <div class="spin-msg" id="watch-msg" style="margin-top:10px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gacha">
+    <div class="wrap">
+      <div class="section-head">
+        <div><span class="kicker">แลกเครดิต</span><h2>สุ่มไอเทม</h2></div>
+      </div>
+      <div class="box3d" style="padding:26px;">
+        <div class="reel-wrap">
+          <div class="reel-viewport">
+            <div class="reel-pointer"></div>
+            <div class="reel-track" id="reel-track"></div>
+          </div>
+          <button class="spin-btn gloss" id="spin-btn" type="button" onclick="handleSpin()">🎰 หมุน (<span id="spin-cost">–</span> เครดิต)</button>
+          <div class="spin-msg" id="spin-msg"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <div><span class="kicker">โปร่งใส ตรวจสอบได้</span><h2>รายการไอเทม & อัตราดรอป</h2></div>
+      </div>
+      <div id="item-list"><p style="color:var(--text-muted);">กำลังโหลด...</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <div>© <span id="year"></span> แจกจริง — เว็บอยู่ระหว่างพัฒนา</div>
+      <div><a href="index.html" style="color:var(--gold-2);text-decoration:none;">กลับหน้าแรก</a></div>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-box box3d">
+      <button class="modal-close" type="button" onclick="closeAuthModal()">✕</button>
+      <div class="modal-tabs">
+        <div class="modal-tab" id="tab-login" onclick="switchAuthTab('login')">เข้าสู่ระบบ</div>
+        <div class="modal-tab" id="tab-signup" onclick="switchAuthTab('signup')">สมัครสมาชิก</div>
+      </div>
+      <div class="modal-title" id="modal-title">เข้าสู่ระบบ</div>
+      <form id="auth-form" onsubmit="return handleAuthSubmit(event)">
+        <label class="field-label">อีเมล</label>
+        <input class="field-input" type="email" id="auth-email" required placeholder="you@example.com" />
+        <label class="field-label">รหัสผ่าน</label>
+        <div style="position:relative;">
+          <input class="field-input" type="password" id="auth-password" required minlength="6" placeholder="อย่างน้อย 6 ตัวอักษร" style="padding-right:44px;" />
+          <button type="button" onclick="togglePw('auth-password', this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.05rem;color:var(--text-muted);">👁️</button>
+        </div>
+        <button class="modal-submit gloss" type="submit" id="auth-submit-btn"><span style="position:relative;">เข้าสู่ระบบ</span></button>
+        <div class="modal-msg" id="auth-msg"></div>
+        <div style="text-align:center;margin-top:10px;">
+          <a href="#" onclick="handleForgotPassword(event)" style="color:var(--gold-2);font-size:0.85rem;">ลืมรหัสผ่าน?</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://vgvstfggkmxgxwicnnxc.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Jj4XOepiICjzOND7HjNs8A_E8N5qzrB';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function togglePw(id, btn){
+      const el = document.getElementById(id);
+      el.type = el.type === 'password' ? 'text' : 'password';
+      btn.textContent = el.type === 'password' ? '👁️' : '🙈';
+    }
+
+    let currentUser = null;
+    let authMode = 'login';
+    let siteSettings = null;
+    let gachaItems = [];
+    const ITEM_WIDTH = 110; // 98px item + 12px margin
+
+    function openAuthModal(mode){
+      switchAuthTab(mode || 'login');
+      document.getElementById('auth-modal').classList.add('open');
+    }
+    function closeAuthModal(){
+      document.getElementById('auth-modal').classList.remove('open');
+      document.getElementById('auth-msg').textContent = '';
+      document.getElementById('auth-form').reset();
+    }
+    function switchAuthTab(mode){
+      authMode = mode;
+      const isLogin = mode === 'login';
+      document.getElementById('tab-login').classList.toggle('active', isLogin);
+      document.getElementById('tab-signup').classList.toggle('active', !isLogin);
+      document.getElementById('modal-title').textContent = isLogin ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก';
+      document.querySelector('#auth-submit-btn span').textContent = isLogin ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก';
+      document.getElementById('auth-msg').textContent = '';
+    }
+
+    async function handleAuthSubmit(e){
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const msg = document.getElementById('auth-msg');
+      msg.className = 'modal-msg';
+      msg.textContent = 'กำลังดำเนินการ...';
+
+      if(authMode === 'signup'){
+        const { data, error } = await sb.auth.signUp({ email, password });
+        if(error){ msg.className = 'modal-msg error'; msg.textContent = error.message; return false; }
+        if(data.session){
+          msg.className = 'modal-msg ok'; msg.textContent = 'สมัครสมาชิกสำเร็จ!';
+          setTimeout(closeAuthModal, 900);
+        } else {
+          msg.className = 'modal-msg ok'; msg.textContent = 'สมัครสำเร็จ! กรุณาเช็คอีเมลเพื่อยืนยันก่อนเข้าสู่ระบบ';
+        }
+      } else {
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if(error){ msg.className = 'modal-msg error'; msg.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'; return false; }
+        msg.className = 'modal-msg ok'; msg.textContent = 'เข้าสู่ระบบสำเร็จ!';
+        setTimeout(closeAuthModal, 700);
+      }
+      return false;
+    }
+
+    async function handleForgotPassword(e){
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const msg = document.getElementById('auth-msg');
+      if(!email){ msg.className = 'modal-msg error'; msg.textContent = 'กรอกอีเมลในช่องด้านบนก่อน'; return; }
+      msg.className = 'modal-msg'; msg.textContent = 'กำลังส่งลิงก์...';
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset-password.html' });
+      if(error){ msg.className = 'modal-msg error'; msg.textContent = error.message; }
+      else { msg.className = 'modal-msg ok'; msg.textContent = 'ส่งลิงก์เปลี่ยนรหัสผ่านไปที่อีเมลแล้ว'; }
+    }
+
+    async function handleSignOut(){ await sb.auth.signOut(); }
+
+    function updateAuthUI(){
+      const area = document.getElementById('nav-auth-area');
+      if(currentUser){
+        area.innerHTML =
+          '<div class="nav-user">เข้าสู่ระบบเป็น <b>' + currentUser.email + '</b></div>' +
+          '<button class="btn-ghost" type="button" onclick="handleSignOut()">ออกจากระบบ</button>';
+      } else {
+        area.innerHTML =
+          '<button class="btn-ghost" type="button" onclick="openAuthModal(\'login\')">เข้าสู่ระบบ</button>' +
+          '<button class="btn-solid" type="button" onclick="openAuthModal(\'signup\')">สมัครสมาชิก</button>';
+      }
+    }
+
+    sb.auth.onAuthStateChange((event, session) => {
+      currentUser = session ? session.user : null;
+      updateAuthUI();
+      loadBalance();
+    });
+
+    async function loadBalance(){
+      const el = document.getElementById('credit-balance');
+      if(!currentUser){ el.textContent = '– เข้าสู่ระบบก่อน'; return; }
+      const { data } = await sb.from('user_credits').select('balance').eq('user_id', currentUser.id).maybeSingle();
+      el.textContent = (data ? data.balance : 0).toLocaleString('en-US');
+    }
+
+    async function loadSiteSettings(){
+      const { data } = await sb.from('site_settings').select('*').eq('id', 1).maybeSingle();
+      siteSettings = data || {};
+      if(siteSettings.mascot_url){
+        document.getElementById('mascot-img').src = siteSettings.mascot_url;
+        document.getElementById('mascot-img').style.display = 'block';
+        document.getElementById('mascot-fallback').style.display = 'none';
+      }
+      document.getElementById('spin-cost').textContent = siteSettings.gacha_cost || 10;
+      if(siteSettings.ad_slot_rewarded){
+        document.getElementById('ad-frame').innerHTML = siteSettings.ad_slot_rewarded;
+      }
+    }
+
+    let watching = false;
+    function startWatchAd(){
+      if(watching) return;
+      if(!currentUser){ openAuthModal('login'); return; }
+      watching = true;
+      const btn = document.getElementById('watch-btn');
+      const msg = document.getElementById('watch-msg');
+      let seconds = 15;
+      btn.disabled = true;
+      msg.className = 'spin-msg';
+      const timer = setInterval(function(){
+        btn.innerHTML = '⏳ กำลังนับถอยหลัง... ' + seconds + ' วิ';
+        seconds--;
+        if(seconds < 0){
+          clearInterval(timer);
+          btn.innerHTML = '✅ รับเครดิตตอนนี้';
+          btn.disabled = false;
+          btn.onclick = claimAdCredit;
+        }
+      }, 1000);
+    }
+
+    async function claimAdCredit(){
+      const btn = document.getElementById('watch-btn');
+      const msg = document.getElementById('watch-msg');
+      btn.disabled = true;
+      const { data, error } = await sb.rpc('claim_ad_credit');
+      if(error){
+        msg.className = 'spin-msg error';
+        msg.textContent = error.message.includes('รอ') ? error.message : 'ไม่สำเร็จ: ' + error.message;
+      } else {
+        msg.className = 'spin-msg ok';
+        msg.textContent = 'รับเครดิตสำเร็จ! ยอดคงเหลือ ' + data + ' เครดิต';
+        document.getElementById('credit-balance').textContent = data.toLocaleString('en-US');
+      }
+      watching = false;
+      btn.innerHTML = '▶️ ดูโฆษณาเพื่อรับเครดิต';
+      btn.onclick = startWatchAd;
+      btn.disabled = false;
+    }
+
+    async function loadGachaItems(){
+      const { data, error } = await sb.from('gacha_items').select('*').eq('active', true).order('sort_order');
+      gachaItems = data || [];
+      renderItemTable();
+      renderIdleReel();
+    }
+
+    function renderItemTable(){
+      const el = document.getElementById('item-list');
+      if(gachaItems.length === 0){ el.innerHTML = '<p style="color:var(--text-muted);">ยังไม่มีไอเทมให้สุ่มตอนนี้</p>'; return; }
+      el.innerHTML = gachaItems.map(function(it){
+        const img = it.image_url ? '<img src="' + it.image_url + '" />' : '<div style="width:36px;height:36px;border-radius:8px;background:var(--bg-3);"></div>';
+        const stockText = it.stock < 0 ? 'ไม่จำกัด' : ('เหลือ ' + it.stock);
+        return '<div class="item-table-row">' + img +
+          '<span class="name">' + it.name + '</span>' +
+          '<span class="stock">' + stockText + '</span>' +
+          '<span class="rate">' + it.drop_rate + '%</span>' +
+        '</div>';
+      }).join('');
+    }
+
+    function itemCardHtml(item, extraClass){
+      const img = item && item.image_url ? '<img src="' + item.image_url + '" />' : (item ? item.name.charAt(0) : '?');
+      return '<div class="reel-item' + (extraClass ? ' ' + extraClass : '') + '">' + img + '</div>';
+    }
+
+    function renderIdleReel(){
+      const track = document.getElementById('reel-track');
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(0)';
+      let html = '';
+      for(let i = 0; i < 10; i++){
+        const it = gachaItems.length ? gachaItems[Math.floor(Math.random() * gachaItems.length)] : null;
+        html += itemCardHtml(it);
+      }
+      track.innerHTML = html;
+    }
+
+    async function handleSpin(){
+      if(!currentUser){ openAuthModal('login'); return; }
+      if(gachaItems.length === 0){ return; }
+      const btn = document.getElementById('spin-btn');
+      const msg = document.getElementById('spin-msg');
+      btn.disabled = true;
+      msg.className = 'spin-msg';
+      msg.textContent = 'กำลังสุ่ม...';
+
+      const { data, error } = await sb.rpc('spin_gacha');
+      if(error){
+        msg.className = 'spin-msg error';
+        msg.textContent = error.message;
+        btn.disabled = false;
+        return;
+      }
+      const result = Array.isArray(data) ? data[0] : data;
+      const wonItem = { name: result.item_name, image_url: result.item_image };
+
+      const track = document.getElementById('reel-track');
+      const totalSlots = 26;
+      const winIndex = 21;
+      let html = '';
+      for(let i = 0; i < totalSlots; i++){
+        if(i === winIndex){
+          html += itemCardHtml(wonItem, 'win-pending');
+        } else {
+          const it = gachaItems[Math.floor(Math.random() * gachaItems.length)];
+          html += itemCardHtml(it);
+        }
+      }
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(0)';
+      track.innerHTML = html;
+
+      void track.offsetWidth;
+
+      const target = -(winIndex * ITEM_WIDTH);
+      track.style.transition = 'transform 3.6s cubic-bezier(0.12, 0.7, 0.18, 1)';
+      track.style.transform = 'translateX(' + target + 'px)';
+
+      track.addEventListener('transitionend', function onEnd(){
+        track.removeEventListener('transitionend', onEnd);
+        const winEl = track.querySelector('.win-pending');
+        if(winEl){ winEl.classList.remove('win-pending'); winEl.classList.add('win'); }
+        msg.className = 'spin-msg ok';
+        msg.textContent = '🎉 ยินดีด้วย! ได้รับ ' + wonItem.name;
+        document.getElementById('credit-balance').textContent = result.new_balance.toLocaleString('en-US');
+        btn.disabled = false;
+        loadGachaItems();
+      }, { once: true });
+    }
+
+    loadSiteSettings();
+    loadGachaItems();
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

@@ -136,6 +136,27 @@
   }
   @media (max-width:760px){ .nav-links{ display:none; } }
 
+  .hamburger-btn{
+    display:none; background:none; border:1px solid var(--line); border-radius:8px;
+    width:40px; height:38px; cursor:pointer; align-items:center; justify-content:center;
+    flex-direction:column; gap:4px;
+  }
+  .hamburger-btn span{ width:20px; height:2px; background:var(--text); display:block; }
+  @media (max-width:760px){ .hamburger-btn{ display:flex; } }
+
+  .mobile-menu{
+    display:none; flex-direction:column; gap:2px;
+    background:var(--bg-2); border-bottom:1px solid var(--line);
+    padding:10px 22px 16px;
+  }
+  .mobile-menu.open{ display:flex; }
+  .mobile-menu a, .mobile-menu button{
+    text-align:left; padding:11px 4px; color:var(--text-muted); text-decoration:none;
+    background:none; border:none; font-family:'Kanit',sans-serif; font-size:0.95rem; cursor:pointer;
+    border-bottom:1px solid var(--line);
+  }
+  .mobile-menu a:last-child, .mobile-menu button:last-child{ border-bottom:none; }
+
   /* ===== hero ===== */
   .hero{
     background:
@@ -356,6 +377,18 @@
         <button class="btn-ghost" type="button" onclick="openAuthModal('login')">เข้าสู่ระบบ</button>
         <button class="btn-solid" type="button" onclick="openAuthModal('signup')">สมัครสมาชิก</button>
       </div>
+      <button class="hamburger-btn" id="hamburger-btn" type="button" onclick="toggleMobileMenu()" aria-label="เมนู">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#drops" onclick="closeMobileMenu()">กิจกรรมล่าสุด</a>
+      <a href="#prizes" onclick="closeMobileMenu()">รางวัล</a>
+      <a href="#winners" onclick="closeMobileMenu()">ผู้ชนะ</a>
+      <a href="credits.html">🎰 เครดิต</a>
+      <a href="#entry" onclick="closeMobileMenu()">วิธีเข้าร่วม</a>
+      <a href="#faq" onclick="closeMobileMenu()">คำถามที่พบบ่อย</a>
+      <div id="mobile-auth-area" style="display:flex;gap:10px;padding-top:10px;"></div>
     </div>
   </header>
 
@@ -636,7 +669,7 @@
 
       const { data: winners, error } = await sb
         .from('winners')
-        .select('announced_at, events(title, prize), participants(display_name)')
+        .select('announced_at, delivery_status, events(title, prize), participants(display_name)')
         .order('announced_at', { ascending: false })
         .limit(9);
 
@@ -658,10 +691,14 @@
         const eventTitle = w.events ? w.events.title : '';
         const prize = w.events ? w.events.prize : '';
         const when = dtFmt.format(new Date(w.announced_at));
+        const delivered = w.delivery_status === 'delivered';
+        const badge = '<span style="display:inline-block;margin-top:6px;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:999px;background:' +
+          (delivered ? 'rgba(46,230,115,0.15);color:var(--live)' : 'rgba(243,204,92,0.15);color:var(--gold-2)') +
+          ';">' + (delivered ? 'ส่งของแล้ว ✓' : 'กำลังเตรียมจัดส่ง') + '</span>';
         return '<div class="step box3d">' +
           '<div class="n gloss"><span>🏆</span></div>' +
           '<h3>' + name + '</h3>' +
-          '<p>ชนะกิจกรรม "' + eventTitle + '"' + (prize ? ' — ได้รับ ' + prize : '') + '<br><span style="opacity:0.7;">' + when + '</span></p>' +
+          '<p>ชนะกิจกรรม "' + eventTitle + '"' + (prize ? ' — ได้รับ ' + prize : '') + '<br><span style="opacity:0.7;">' + when + '</span>' + badge + '</p>' +
         '</div>';
       }).join('') + '</div>';
     }
@@ -812,15 +849,26 @@
 
     function updateAuthUI(){
       const area = document.getElementById('nav-auth-area');
+      const mobileArea = document.getElementById('mobile-auth-area');
+      let html;
       if(currentUser){
-        area.innerHTML =
+        html =
           '<div class="nav-user">เข้าสู่ระบบเป็น <b>' + currentUser.email + '</b></div>' +
           '<button class="btn-ghost" type="button" onclick="handleSignOut()">ออกจากระบบ</button>';
       } else {
-        area.innerHTML =
+        html =
           '<button class="btn-ghost" type="button" onclick="openAuthModal(\'login\')">เข้าสู่ระบบ</button>' +
           '<button class="btn-solid" type="button" onclick="openAuthModal(\'signup\')">สมัครสมาชิก</button>';
       }
+      area.innerHTML = html;
+      if(mobileArea) mobileArea.innerHTML = html;
+    }
+
+    function toggleMobileMenu(){
+      document.getElementById('mobile-menu').classList.toggle('open');
+    }
+    function closeMobileMenu(){
+      document.getElementById('mobile-menu').classList.remove('open');
     }
 
     sb.auth.onAuthStateChange((event, session) => {

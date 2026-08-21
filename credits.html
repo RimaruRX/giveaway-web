@@ -93,25 +93,8 @@
     font-family:'Chonburi', 'Kanit', sans-serif;
     font-weight:400;
     letter-spacing:0.01em;
-    color:var(--gold-2); /* fallback for browsers without background-clip:text */
-    background:
-      radial-gradient(circle at 22% 28%, rgba(255,255,255,0.55) 0 2px, transparent 3px),
-      radial-gradient(circle at 68% 62%, rgba(255,255,255,0.4) 0 1.5px, transparent 2.5px),
-      radial-gradient(circle at 45% 80%, rgba(120,70,0,0.4) 0 1.5px, transparent 2.5px),
-      repeating-linear-gradient(128deg,
-        #fff6d8 0px, #fff6d8 4px,
-        #f3cc5c 4px 10px,
-        #d9a521 10px 14px,
-        #f3cc5c 14px 20px);
-    -webkit-background-clip:text;
-    background-clip:text;
-    -webkit-text-fill-color:transparent;
-    -webkit-text-stroke:3px var(--black-deep);
-    text-shadow:
-      0 2px 0 var(--red-2),
-      0 5px 0 var(--red-2),
-      0 8px 0 var(--black-deep),
-      0 12px 18px rgba(0,0,0,0.65);
+    color:var(--gold-2);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
   }
   .ribbon{
     background:var(--black-deep);
@@ -631,14 +614,25 @@
         document.getElementById('mascot-fallback').style.display = 'none';
       }
       document.getElementById('spin-cost').textContent = siteSettings.gacha_cost || 10;
-      if(siteSettings.ad_slot_rewarded){
+
+      const hasAd = !!(siteSettings.ad_slot_rewarded && siteSettings.ad_slot_rewarded.trim());
+      const watchBtn = document.getElementById('watch-btn');
+      const watchMsg = document.getElementById('watch-msg');
+      if(hasAd){
         document.getElementById('ad-frame').innerHTML = siteSettings.ad_slot_rewarded;
+      } else {
+        document.getElementById('ad-frame').textContent = 'ยังไม่มีโฆษณาให้ดูตอนนี้';
+        watchBtn.disabled = true;
+        watchBtn.textContent = 'ยังไม่พร้อมใช้งาน';
+        watchMsg.className = 'spin-msg';
+        watchMsg.textContent = 'ระบบรับเครดิตจากโฆษณายังไม่เปิดใช้งาน กรุณากลับมาใหม่ภายหลัง';
       }
     }
 
     let watching = false;
     function startWatchAd(){
       if(watching) return;
+      if(!siteSettings.ad_slot_rewarded || !siteSettings.ad_slot_rewarded.trim()){ return; }
       if(!currentUser){ openAuthModal('login'); return; }
       watching = true;
       const btn = document.getElementById('watch-btn');
